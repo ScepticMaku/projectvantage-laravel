@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Task;
 
@@ -17,30 +18,63 @@ class TaskController extends Controller
 
     public function addTask(Request $request) {
         $id = Auth::id();
+        $tasks = $request->all();
 
-        $request->validate([
-            'task_name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:255'],
-            'date_created' => ['date'],
-            'due_date' => ['required', 'date'],
-            'user_id' => ['exists:users,id'],
-            'team_member_id' => ['exists:team_members,id'],
-            'project_id' => ['required', 'exists:projects,id'],
-            'status_id' => ['required', 'exists:project_statuses,id'],
-        ]);
+        if(isset($tasks[0])) {
+            $createdTasks = [];
 
-        $task = Task::create([
-            'task_name' => $request->task_name,
-            'description' => $request->description,
-            'date_created' => now()->toDateString(),
-            'due_date' => $request->due_date,
-            'user_id' => $id,
-            'team_member_id' => $request->team_member_id,
-            'project_id' => $request->project_id,
-            'status_id' => $request->status_id,
-        ]);
+            foreach($tasks as $taskData) {
+                $validator = Validator::make($taskData, [
+                    'task_name' => ['required', 'string', 'max:255'],
+                    'description' => ['required', 'string', 'max:255'],
+                    'date_created' => ['date'],
+                    'due_date' => ['required', 'date'],
+                    'user_id' => ['exists:users,id'],
+                    'project_id' => ['required', 'exists:projects,id'],
+                    'status_id' => ['required', 'exists:project_statuses,id'],
+                ]);
 
-        return response()->json(['message' => 'Task added successfully!', 'task' => $task]);
+                if($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+                $task = Task::create([
+                    'task_name' => $taskData['task_name'],
+                    'description' => $taskData['description'],
+                    'date_created' => now()->toDateString(),
+                    'due_date' => $taskData['due_date'],
+                    'user_id' => $id,
+                    'project_id' => $taskData['project_id'],
+                    'status_id' => $taskData['status_id'],
+                ]);
+
+                $createdTasks[] = $task;
+            }
+
+            return response()->json(['message' => 'Tasks Created Successfully!', 'tasks' => $createdTasks]);
+        } else {
+            $request->validate([
+                'task_name' => ['required', 'string', 'max:255'],
+                'description' => ['required', 'string', 'max:255'],
+                'date_created' => ['date'],
+                'due_date' => ['required', 'date'],
+                'user_id' => ['exists:users,id'],
+                'project_id' => ['required', 'exists:projects,id'],
+                'status_id' => ['required', 'exists:project_statuses,id'],
+            ]);
+    
+            $task = Task::create([
+                'task_name' => $request->task_name,
+                'description' => $request->description,
+                'date_created' => now()->toDateString(),
+                'due_date' => $request->due_date,
+                'user_id' => $id,
+                'project_id' => $request->project_id,
+                'status_id' => $request->status_id,
+            ]);
+    
+            return response()->json(['message' => 'Task added successfully!', 'task' => $task]);
+        }
     }
 
     public function assignTask(Request $request, $id) {

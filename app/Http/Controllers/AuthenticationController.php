@@ -54,7 +54,6 @@ class AuthenticationController extends Controller
     }
 
     public function resetPassword(Request $request, $id) {
-
         $request->validate([
             'password' => ['required', 'string', 'min:8'],
             'confirm_password' => ['required', 'same:password'],

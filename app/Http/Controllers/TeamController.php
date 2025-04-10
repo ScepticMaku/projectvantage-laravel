@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TeamController extends Controller
 {
@@ -15,19 +16,43 @@ class TeamController extends Controller
     }
 
     public function addTeam(Request $request) {
-        $request->validate([
-            'team_name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:255'],
-            'project_id' => ['nullable', 'exists:projects,id'],
-        ]);
+        $teams = $request->all();
 
-        $team = Team::create([
-            'team_name' => $request->team_name,
-            'description' => $request->description,
-            'project_id' => $request->project_id,
-        ]);
+        if(isset($teams[0])) {
+            $createdTeams = [];
 
-        return response()->json(['message' => 'Team added successfully!', 'team' => $team]);
+            foreach($teams as $teamData) {
+                $validator = Validator::make($teamData, [
+                    'team_name' => ['required', 'string', 'max:255'],
+                    'description' => ['required', 'string', 'max:255'],
+                ]);
+
+                if($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+                $team = Team::create([
+                    'team_name' => $teamData['team_name'],
+                    'description' => $teamData['description'],
+                ]);
+
+                $createdTeams[] = $team;
+            }
+
+            return response()->json(['message' => 'Teams Created Successfully!', 'teams' => $createdTeams]);
+        } else {
+            $request->validate([
+                'team_name' => ['required', 'string', 'max:255'],
+                'description' => ['required', 'string', 'max:255'], 
+            ]);
+    
+            $team = Team::create([
+                'team_name' => $request->team_name,
+                'description' => $request->description,
+            ]);
+    
+            return response()->json(['message' => 'Team added successfully!', 'team' => $team]);
+        }
     }
 
     public function assignTeam(Request $request, $id) {

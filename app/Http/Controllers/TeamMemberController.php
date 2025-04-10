@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\TeamMember;
 
 class TeamMemberController extends Controller
@@ -15,21 +16,51 @@ class TeamMemberController extends Controller
     }
 
     public function addTeamMember(Request $request) {
-        $request->validate([
-            'team_id' => ['required', 'exists:teams,id'],
-            'user_id' => ['required', 'exists:users,id'],
-            'role_id' => ['required', 'exists:roles,id'],
-            'status_id' => ['required', 'exists:team_member_statuses,id'],
-        ]);
+        $teamMembers = $request->all();
 
-        $teamMember = TeamMember::create([
-            'team_id' => $request->team_id,
-            'user_id' => $request->user_id,
-            'role_id' => $request->role_id,
-            'status_id' => $request->status_id,
-        ]);
+        if(isset($teamMembers[0])) {
+            $createdTeamMembers = [];
 
-        return response()->json(['message' => 'Team member added successfully!', 'team_member' => $teamMember]);
+            foreach($teamMembers as $teamData) {
+                $validator = Validator::make($teamData,[
+                    'team_id' => ['required', 'exists:teams,id'],
+                    'user_id' => ['required', 'exists:users,id'],
+                    'role_id' => ['required', 'exists:roles,id'],
+                    'status_id' => ['required', 'exists:team_member_statuses,id'],
+                ]);
+
+                if($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+                $teamMember = TeamMember::create([
+                    'team_id' => $teamData['team_id'],
+                    'user_id' => $teamData['user_id'],
+                    'role_id' => $teamData['role_id'],
+                    'status_id' => $teamData['status_id'],
+                ]);
+
+                $createdTeamMembers[] = $teamMember;
+            }
+
+            return response()->json(['message' => 'Team Members Successfully Added!', 'team_members' => $createdTeamMembers]);
+        } else {
+            $request->validate([
+                'team_id' => ['required', 'exists:teams,id'],
+                'user_id' => ['required', 'exists:users,id'],
+                'role_id' => ['required', 'exists:roles,id'],
+                'status_id' => ['required', 'exists:team_member_statuses,id'],
+            ]);
+    
+            $teamMember = TeamMember::create([
+                'team_id' => $request->team_id,
+                'user_id' => $request->user_id,
+                'role_id' => $request->role_id,
+                'status_id' => $request->status_id,
+            ]);
+    
+            return response()->json(['message' => 'Team member added successfully!', 'team_member' => $teamMember]);
+        }
     }
 
     public function addMember(Request $request, $id) {

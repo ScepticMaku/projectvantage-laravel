@@ -27,11 +27,12 @@ use App\Http\Controllers\TeamMemberController;
 
 Route::post('/register', [AuthenticationController::class, 'register']);
 Route::post('/login', [AuthenticationController::class, 'login']);
+Route::put('/reset-password/{id}', [AuthenticationController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function() {
 
     // Authentcation
-    Route::put('/reset-password/{id}', [AuthenticationController::class, 'resetPassword']);
+    
     Route::post('/logout', [AuthenticationController::class, 'logout']);
 
     // Profile
