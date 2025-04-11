@@ -41,7 +41,7 @@ class TeamMemberStatusController extends Controller
             'name' => $request->name,
         ]);
 
-        return reponse()->json(['message' => 'Status successfully updated!', 'team_member_status' => $teamMemberStatus]);
+        return response()->json(['message' => 'Status successfully updated!', 'team_member_status' => $teamMemberStatus]);
     }
 
     public function deleteTeamMemberStatus($id) {

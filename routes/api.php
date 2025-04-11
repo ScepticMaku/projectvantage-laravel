@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectStatusController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskStatusController;
@@ -80,4 +81,28 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/add-role', [RoleController::class, 'addRole']);
     Route::put('/edit-role/{id}', [RoleController::class, 'editRole']);
     Route::delete('/delete-role/{id}', [RoleController::class, 'deleteRole']);
+
+    // User Status
+    Route::get('/get-user-statuses', [UserStatusController::class, 'getUserStatuses']);
+    Route::post('/add-user-status', [UserStatusController::class, 'addUserStatus']);
+    Route::put('/edit-user-status/{id}', [UserStatusController::class, 'editUserStatus']);
+    Route::delete('/delete-user-status/{id}', [UserStatusController::class, 'deleteUserStatus']);
+
+    // Project Status
+    Route::get('/get-project-statuses', [ProjectStatusController::class, 'getProjectStatuses']);
+    Route::post('/add-project-status', [ProjectStatusController::class, 'addProjectStatus']);
+    Route::put('/edit-project-status/{id}', [ProjectStatusController::class, 'editProjectStatus']);
+    Route::delete('/delete-project-status/{id}', [ProjectStatusController::class, 'deleteProjectStatus']);
+
+    // Task Status
+    Route::get('/get-task-statuses', [TaskStatusController::class, 'getTaskStatuses']);
+    Route::post('/add-task-status', [TaskStatusController::class, 'addTaskStatus']);
+    Route::put('/edit-task-status/{id}', [TaskStatusController::class, 'editTaskStatus']);
+    Route::delete('/delete-task-status/{id}', [TaskStatusController::class, 'deleteTaskStatus']);
+
+    // Team Member Status
+    Route::get('/get-team-member-statuses', [TeamMemberStatusController::class, 'getTeamMemberStatuses']);
+    Route::post('/add-team-member-status', [TeamMemberStatusController::class, 'addTeamMemberStatus']);
+    Route::put('/edit-team-member-status/{id}', [TeamMemberStatusController::class, 'editTeamMemberStatus']);
+    Route::delete('/delete-team-member-status/{id}', [TeamMemberStatusController::class, 'deleteTeamMemberStatus']);
 });

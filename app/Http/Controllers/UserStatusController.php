@@ -41,7 +41,7 @@ class UserStatusController extends Controller
             'name' => $request->name,
         ]);
 
-        return reponse()->json(['message' => 'Status successfully updated!', 'user_status' => $userStatus]);
+        return response()->json(['message' => 'Status successfully updated!', 'user_status' => $userStatus]);
     }
 
     public function deleteUserStatus($id) {

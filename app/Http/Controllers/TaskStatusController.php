@@ -11,7 +11,7 @@ class TaskStatusController extends Controller
     public function getTaskStatuses() {
         $taskStatuses = TaskStatus::get();
 
-        return response()->json(['task_statuses' => $taskSTatuses]);
+        return response()->json(['task_statuses' => $taskStatuses]);
     }
 
     public function addTaskStatus(Request $request) {
@@ -41,7 +41,7 @@ class TaskStatusController extends Controller
             'name' => $request->name,
         ]);
 
-        return reponse()->json(['message' => 'Status successfully updated!', 'task_status' => $taskStatus]);
+        return response()->json(['message' => 'Status successfully updated!', 'task_status' => $taskStatus]);
     }
 
     public function deleteTaskStatus($id) {

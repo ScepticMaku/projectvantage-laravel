@@ -11,7 +11,7 @@ class ProjectStatusController extends Controller
     public function getProjectStatuses() {
         $projectStatuses = ProjectStatus::get();
 
-        return response()->json(['project_statuses' => $ProjectStatuses]);
+        return response()->json(['project_statuses' => $projectStatuses]);
     }
 
     public function addProjectStatus(Request $request) {
@@ -23,7 +23,7 @@ class ProjectStatusController extends Controller
             'name' => $request->name,
         ]);
 
-        return response()->json(['message' => 'Status added successfully!', 'project_status' => $ProjectStatus]);
+        return response()->json(['message' => 'Status added successfully!', 'project_status' => $projectStatus]);
     }
 
     public function editProjectStatus(Request $request, $id) {
@@ -31,17 +31,17 @@ class ProjectStatusController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $ProjectStatus = ProjectStatus::find($id);
+        $projectStatus = ProjectStatus::find($id);
 
-        if(!$ProjectStatus) {
+        if(!$projectStatus) {
             return response()->json(['message' => 'Status not found.'], 404);
         }
 
-        $role->update([
+        $projectStatus->update([
             'name' => $request->name,
         ]);
 
-        return reponse()->json(['message' => 'Status successfully updated!', 'project_status' => $ProjectStatus]);
+        return response()->json(['message' => 'Status successfully updated!', 'project_status' => $projectStatus]);
     }
 
     public function deleteProjectStatus($id) {
